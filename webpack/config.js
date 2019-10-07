@@ -2,8 +2,8 @@ const path = require('path');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-// const mainjs = path.resolve(__dirname, '../src/demo/main.js')
-const mainjs = path.resolve(__dirname, '../src/dynamicRouter/main.js');
+const mainjs = path.resolve(__dirname, '../src/demo/main.js')
+// const mainjs = path.resolve(__dirname, '../src/dynamicRouter/main.js');
 
 module.exports = {
     entry: mainjs,

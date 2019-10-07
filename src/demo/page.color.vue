@@ -22,9 +22,48 @@
         <option value="inherit">inherit-继承</option>
         <option value="unset">unset-复原</option>
       </select>
-      <div class="color red" :style="colorStyle"></div>
-      <div class="color green" :style="colorStyle"></div>
-      <div class="color blue" :style="colorStyle"></div>
+      <div
+        class="color red"
+        :style="{ mixBlendMode: `${mode}`, backgroundColor: `rgb(${red},0,0)` }"
+      ></div>
+      <div
+        class="color green"
+        :style="{
+          mixBlendMode: `${mode}`,
+          backgroundColor: `rgb(0,${green},0)`
+        }"
+      ></div>
+      <div
+        class="color blue"
+        :style="{
+          mixBlendMode: `${mode}`,
+          backgroundColor: `rgb(0,0,${blue})`
+        }"
+      ></div>
+    </div>
+    <div style="width: 500px; margin: 30px auto;">
+      <a-slider
+        :defaultValue="255"
+        @change="value => (red = value)"
+        :max="255"
+        :min="0"
+        :tooltipVisible="true"
+        :marks="{ 255: { label: '红' } }"
+      />
+      <a-slider
+        :defaultValue="255"
+        @change="value => (green = value)"
+        :max="255"
+        :min="0"
+        :marks="{ 255: { label: '绿' } }"
+      />
+      <a-slider
+        :defaultValue="255"
+        @change="value => (blue = value)"
+        :max="255"
+        :min="0"
+        :marks="{ 255: { label: '蓝' } }"
+      />
     </div>
   </div>
 </template>
@@ -33,9 +72,10 @@ import Draggable from "gsap/Draggable";
 export default {
   data() {
     return {
-      colorStyle: {
-        "mix-blend-mode": "screen"
-      }
+      mode: "screen",
+      red: 255,
+      green: 255,
+      blue: 255
     };
   },
   mounted() {
@@ -50,7 +90,7 @@ export default {
   },
   methods: {
     onSelectChange(e) {
-      this.colorStyle["mix-blend-mode"] = e.target.value;
+      this.mode = e.target.value;
     }
   }
 };

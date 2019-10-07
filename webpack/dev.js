@@ -30,8 +30,9 @@ module.exports = merge(config, {
         compress: true,
         index: 'index.html',
         hot: true,
+        // host:'192.168.0.101',
         open: true,
-        port: 9000,
+        port: 1024,
         overlay: {
             warnings: true,
             errors: true,

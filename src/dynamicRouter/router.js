@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import vuex from './vuex';
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
@@ -25,7 +26,6 @@ const router = new VueRouter({
 });
 
 let whiteList = routes.map(i => i.path);
-import vuex from './vuex';
 router.beforeEach((to, from, next) => {
     let path = to.redirectedFrom || to.path;
     // 白名单 放行
@@ -33,17 +33,10 @@ router.beforeEach((to, from, next) => {
     // 黑名单
     if (!vuex.getters.roleRouter) return next({ path: '/login' });
     if (!vuex.getters.isAddRoutes) {
-        try {
-            console.log('path未注册,存在角色路由，立即注册尝试匹配');
-            router.addRoutes(vuex.getters.roleRouter);
-            vuex.dispatch('set_isAddRoutes', true);
-            next(path);
-        } catch (error) {
-            console.log(error);
-            alert('发生未知错误，请联系网站管理员');
-            localStorage.removeItem('roleRouterRules');
-            next({ path: '/404' });
-        }
+        console.log('path未注册,存在角色路由，立即注册尝试匹配');
+        router.addRoutes(vuex.getters.roleRouter);
+        vuex.dispatch('set_isAddRoutes', true);
+        next(path);
     } else {
         console.log('已注册过动态路由，尝试匹配');
         next();

@@ -1,5 +1,13 @@
 <template>
   <div class="page_video2gif">
+    <div style="padding-bottom:10px">
+      选择素材：
+      <a-select style="width: 150px" @change="handleAsset">
+        <a-select-option v-for="video in list" :key="video.src">{{
+          video.name
+        }}</a-select-option>
+      </a-select>
+    </div>
     <a-upload-dragger name="file" :multiple="true" :beforeUpload="beforeUpload">
       <p class="ant-upload-drag-icon">
         <a-icon type="inbox" />
@@ -26,10 +34,17 @@
         <p>视频文件名： {{ video.name || "-" }}</p>
         <p>视频分辨率： {{ video.ratio || "-" }}</p>
         <p>视频总时长： {{ video.duration || "-" }}秒</p>
-        <p>预计Gif FPS：{{ video.FPS }}帧/s</p>
+        <p>
+          预计Gif FPS：<a-input-number
+            :min="5"
+            :max="60"
+            v-model="video.FPS"
+            style="width:50px"
+          />帧/s
+        </p>
         <p>
           预计生产帧：
-          {{ `${Math.floor((video.duration * 1000) / (1000 / 4))}帧` }}
+          {{ `${Math.floor((video.duration * 1000) / (1000 / video.FPS))}帧` }}
         </p>
         <p>该文件大小： {{ video.size || "-" }}MB</p>
         <p>添加字幕数： {{ video.word.length }}</p>
@@ -103,6 +118,7 @@
   </div>
 </template>
 <script>
+// mp4 打不开怎么解决这个问题呢，我用的方式是在格式工厂里转换一下编码格式，在MP4的转换里，输出配置——>格式编码——>选择AVC(H264)
 import { debuglog } from "util";
 import gifshot from "gifshot";
 export default {
@@ -145,6 +161,32 @@ export default {
       }
     ];
     return {
+      list: [
+        {
+          name: "乌鸦哥的欢迎",
+          src: require("./video/hello.mp4")
+        },
+        {
+          name: "为所欲为",
+          src: require("./video/anyway.mp4")
+        },
+        {
+          name: "这辈子不打工",
+          src: require("./video/nowork.mp4")
+        },
+        {
+          name: "诸葛孔明",
+          src: require("./video/zhugeliang.mp4")
+        },
+        {
+          name: "土拨鼠",
+          src: require("./video/toboshu.mp4")
+        },
+        {
+          name: "窃格瓦拉",
+          src: require("./video/steal.mp4")
+        }
+      ],
       file: null,
       loading: false,
       video: {
@@ -154,13 +196,17 @@ export default {
         size: null,
         duration: null,
         ratio: null,
-        FPS: 4,
+        FPS: 10,
         word: word
       },
       videoSrc: null
     };
   },
   methods: {
+    handleAsset(val) {
+      console.log(val);
+      this.videoSrc = val;
+    },
     onSliderChange(index, val) {
       this.video.word[index].start = val[0];
       this.video.word[index].stop = val[1];
@@ -198,6 +244,8 @@ export default {
       this.addWord();
     },
     checkWordTime() {
+      this.$refs.video.currentTime = 0;
+      this.$refs.gif.src = null;
       let word = this.video.word;
       let err = [];
       for (let index = 0; index < word.length; index++) {
@@ -240,12 +288,13 @@ export default {
           // console.log(video.currentTime);
           let txt = filterWord(video.currentTime);
           ctx.drawImage(video, 0, 0, ww, hh);
-          ctx.font = "20px Microsoft JhengHei"; //设置文本大小 + 字体
+          ctx.font = "14px Microsoft JhengHei"; //设置文本大小 + 字体
 
           ctx.fillStyle = "#ffffff"; //设置文本颜色
           ctx.textAlign = "center"; //设置文本对齐
-          ctx.fillText(txt, 150, 150); //绘制文本 + 文本 x 和 y 的坐标位置
+          ctx.fillText(txt, 150, 140); //绘制文本 + 文本 x 和 y 的坐标位置
           images.push(canvas.toDataURL("image/jpeg"));
+          console.log(txt);
         }, tt);
       };
       let download = (base64, callback) => {
@@ -292,6 +341,14 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+.page_video2gif {
+  .ant-upload-list {
+    display: none;
+  }
+}
+</style>
+
 <style lang="scss" scoped>
 .page_video2gif {
   .videoBox {

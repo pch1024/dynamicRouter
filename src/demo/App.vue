@@ -1,47 +1,66 @@
 <template>
-  <div id="app">
-    <ul>
-      <router-link tag="li" to="/">默认路由根路由</router-link>
-      <router-link tag="li" to="/login">login</router-link>
-      <router-link tag="li" to="/b">
-        动态注册B，未登录login,已登录可进入，无权限404
-      </router-link>
-      <router-link tag="li" to="/c">
-        动态注册C，未登录login,已登录可进入，无权限404
-      </router-link>
-      <router-link tag="li" to="/err">
-        不存在的路由,已登录的去404，未登录去login
-      </router-link>
-      <li @click="exit">模拟用户登出，跳转到A</li>
-    </ul>
-    <router-view></router-view>
+  <div class="app">
+    <!-- <a-locale-provider :locale="locale"> -->
+    <div class="nav">
+      <span v-for="item in pages" :key="item" @click="page = item">
+        {{ item }}
+      </span>
+    </div>
+    <pageJPEG class="page" v-if="page === 'JPEG'" />
+    <pageColor class="page" v-if="page === 'Color'" />
+    <pageVideo2Gif class="page" v-if="page === 'Video2Gif'" />
+    <!-- </a-locale-provider> -->
   </div>
 </template>
-
 <script>
-import { mapActions } from "vuex";
-import { dynamic } from "./router";
+import zhCN from "ant-design-vue/lib/locale-provider/zh_CN";
+import pageColor from "./page.color";
+import pageVideo2Gif from "./page.video2gif";
+import pageJPEG from "./page.jpeg";
 export default {
-  name: "app",
-  methods: {
-    ...mapActions([
-      "set_roleRouterRules",
-      "set_isAddRoutes" // 将 `this.incrementBy(amount)` 映射为 `this.$store.dispatch('incrementBy', amount)`
-    ]),
-    exit() {
-      window.location.href = "/";
-      localStorage.clear();
-      window.location.reload();
-    }
+  components: {
+    pageJPEG,
+    pageColor,
+    pageVideo2Gif
+  },
+  data() {
+    let pages = ["JPEG", "Color", "Video2Gif"];
+    return {
+      name: "hello world",
+      pages,
+      page: pages[0],
+      locale: zhCN
+    };
   }
 };
 </script>
+<style lang="scss" scoped>
+.nav {
+  display: flex;
+  flex-flow: row nowrap;
+  width: 100%;
+  justify-content: center;
 
-<style lang="scss" >
-li {
-  text-align: center;
-  cursor: pointer;
-  color: skyblue;
-  text-decoration: underline;
+  span {
+    height: 40px;
+    line-height: 40px;
+    font-size: 40px;
+    font-weight: 400;
+    margin: 40px 0;
+    padding: 0 40px;
+    &:not(:last-child) {
+      border-right: 1px dashed lightgray;
+    }
+    &:hover {
+      color: skyblue;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+}
+.page {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
 }
 </style>
